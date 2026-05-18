@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink, Link } from 'react-router-dom';
 import './App.css';
 import Logo from './components/Logo';
 import Activities from './components/Activities';
@@ -21,13 +21,13 @@ function App() {
               <Logo size="small" />
               <span className="brand-text">Octofit Tracker</span>
             </Link>
-            <button 
-              className="navbar-toggler" 
-              type="button" 
-              data-bs-toggle="collapse" 
-              data-bs-target="#navbarNav" 
-              aria-controls="navbarNav" 
-              aria-expanded="false" 
+            <button
+              className="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarNav"
+              aria-controls="navbarNav"
+              aria-expanded="false"
               aria-label="Toggle navigation"
             >
               <span className="navbar-toggler-icon"></span>
@@ -35,29 +35,34 @@ function App() {
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav ms-auto">
                 <li className="nav-item">
-                  <Link className="nav-link" to="/users">
+                  <NavLink className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')} to="/">
+                    Home
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')} to="/users">
                     👥 Users
-                  </Link>
+                  </NavLink>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/teams">
+                  <NavLink className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')} to="/teams">
                     👨‍👩‍👧‍👦 Teams
-                  </Link>
+                  </NavLink>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/activities">
+                  <NavLink className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')} to="/activities">
                     🎯 Activities
-                  </Link>
+                  </NavLink>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/workouts">
+                  <NavLink className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')} to="/workouts">
                     💪 Workouts
-                  </Link>
+                  </NavLink>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/leaderboard">
+                  <NavLink className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')} to="/leaderboard">
                     🏆 Leaderboard
-                  </Link>
+                  </NavLink>
                 </li>
               </ul>
             </div>
@@ -65,27 +70,33 @@ function App() {
         </nav>
 
         <Routes>
-          <Route 
-            path="/" 
+          <Route
+            path="/"
             element={
-              <div className="container">
-                <div className="row">
-                  <div className="col-12">
+              <div className="container py-4">
+                <div className="row align-items-center mb-5">
+                  <div className="col-lg-8">
                     <h1 className="hero-title">🎯 Welcome to Octofit Tracker</h1>
-                    <p className="hero-subtitle">Your personal fitness tracking and competitive leaderboard platform</p>
+                    <p className="hero-subtitle">Your personal fitness tracking and competitive leaderboard platform.</p>
+                  </div>
+                  <div className="col-lg-4 text-lg-end">
+                    <Link to="/users" className="btn btn-outline-light btn-lg me-2">
+                      Browse Users
+                    </Link>
+                    <Link to="/activities" className="btn btn-warning btn-lg">
+                      Explore Activities
+                    </Link>
                   </div>
                 </div>
 
-                <div className="row">
+                <div className="row g-4">
                   <div className="col-md-6 col-lg-4">
                     <div className="card feature-card">
-                      <div className="card-header">
-                        👥 Users
-                      </div>
+                      <div className="card-header">👥 Users</div>
                       <div className="card-body">
-                        <p className="card-text">Manage your user profile and view other users in the fitness community.</p>
+                        <p className="card-text">Manage user profiles, track progress, and connect with your fitness community.</p>
                         <Link to="/users" className="btn btn-primary btn-sm">
-                          View Users →
+                          View Users
                         </Link>
                       </div>
                     </div>
@@ -93,13 +104,11 @@ function App() {
 
                   <div className="col-md-6 col-lg-4">
                     <div className="card feature-card">
-                      <div className="card-header">
-                        👨‍👩‍👧‍👦 Teams
-                      </div>
+                      <div className="card-header">👨‍👩‍👧‍👦 Teams</div>
                       <div className="card-body">
-                        <p className="card-text">Create or join teams to compete together and build community connections.</p>
+                        <p className="card-text">Create or join teams to stay motivated together and compete friendly challenges.</p>
                         <Link to="/teams" className="btn btn-primary btn-sm">
-                          View Teams →
+                          View Teams
                         </Link>
                       </div>
                     </div>
@@ -107,13 +116,11 @@ function App() {
 
                   <div className="col-md-6 col-lg-4">
                     <div className="card feature-card">
-                      <div className="card-header">
-                        🎯 Activities
-                      </div>
+                      <div className="card-header">🎯 Activities</div>
                       <div className="card-body">
-                        <p className="card-text">Log and track your fitness activities, from running to weightlifting.</p>
+                        <p className="card-text">Track workouts, log runs, and analyze your fitness activity history.</p>
                         <Link to="/activities" className="btn btn-primary btn-sm">
-                          View Activities →
+                          View Activities
                         </Link>
                       </div>
                     </div>
@@ -121,13 +128,11 @@ function App() {
 
                   <div className="col-md-6 col-lg-4">
                     <div className="card feature-card">
-                      <div className="card-header">
-                        💪 Workouts
-                      </div>
+                      <div className="card-header">💪 Workouts</div>
                       <div className="card-body">
-                        <p className="card-text">Access personalized workout suggestions tailored to your fitness goals.</p>
+                        <p className="card-text">Browse workout plans and discover routines tailored to your goals.</p>
                         <Link to="/workouts" className="btn btn-primary btn-sm">
-                          View Workouts →
+                          View Workouts
                         </Link>
                       </div>
                     </div>
@@ -135,161 +140,18 @@ function App() {
 
                   <div className="col-md-6 col-lg-4">
                     <div className="card feature-card">
-                      <div className="card-header">
-                        🏆 Leaderboard
-                      </div>
+                      <div className="card-header">🏆 Leaderboard</div>
                       <div className="card-body">
-                        <p className="card-text">Compete with other users and teams on our competitive leaderboard.</p>
+                        <p className="card-text">See how you rank against users and teams across the Octofit community.</p>
                         <Link to="/leaderboard" className="btn btn-primary btn-sm">
-                          View Leaderboard →
+                          View Leaderboard
                         </Link>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            } 
-          />
-          <Route path="/users" element={<Users />} />
-          <Route path="/teams" element={<Teams />} />
-          <Route path="/activities" element={<Activities />} />
-          <Route path="/workouts" element={<Workouts />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
-        </Routes>
-      </div>
-    </Router>
-  );
-}
-
-export default App;
-            <button 
-              className="navbar-toggler" 
-              type="button" 
-              data-bs-toggle="collapse" 
-              data-bs-target="#navbarNav" 
-              aria-controls="navbarNav" 
-              aria-expanded="false" 
-              aria-label="Toggle navigation"
-            >
-              <span className="navbar-toggler-icon"></span>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarNav">
-              <ul className="navbar-nav ms-auto">
-                <li className="nav-item">
-                  <Link className="nav-link" to="/users">
-                    👥 Users
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/teams">
-                    👨‍👩‍👧‍👦 Teams
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/activities">
-                    🎯 Activities
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/workouts">
-                    💪 Workouts
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/leaderboard">
-                    🏆 Leaderboard
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-
-        <Routes>
-          <Route 
-            path="/" 
-            element={
-              <div className="container">
-                <div className="row">
-                  <div className="col-12">
-                    <h1>🎯 Welcome to Octofit Tracker</h1>
-                    <p className="lead text-muted">Your personal fitness tracking and competitive leaderboard platform</p>
-                  </div>
-                </div>
-
-                <div className="row">
-                  <div className="col-md-6 col-lg-4">
-                    <div className="card">
-                      <div className="card-header">
-                        👥 Users
-                      </div>
-                      <div className="card-body">
-                        <p className="card-text">Manage your user profile and view other users in the fitness community.</p>
-                        <Link to="/users" className="btn btn-primary btn-sm">
-                          View Users →
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-md-6 col-lg-4">
-                    <div className="card">
-                      <div className="card-header">
-                        👨‍👩‍👧‍👦 Teams
-                      </div>
-                      <div className="card-body">
-                        <p className="card-text">Create or join teams to compete together and build community connections.</p>
-                        <Link to="/teams" className="btn btn-primary btn-sm">
-                          View Teams →
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-md-6 col-lg-4">
-                    <div className="card">
-                      <div className="card-header">
-                        🎯 Activities
-                      </div>
-                      <div className="card-body">
-                        <p className="card-text">Log and track your fitness activities, from running to weightlifting.</p>
-                        <Link to="/activities" className="btn btn-primary btn-sm">
-                          View Activities →
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-md-6 col-lg-4">
-                    <div className="card">
-                      <div className="card-header">
-                        💪 Workouts
-                      </div>
-                      <div className="card-body">
-                        <p className="card-text">Access personalized workout suggestions tailored to your fitness goals.</p>
-                        <Link to="/workouts" className="btn btn-primary btn-sm">
-                          View Workouts →
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-md-6 col-lg-4">
-                    <div className="card">
-                      <div className="card-header">
-                        🏆 Leaderboard
-                      </div>
-                      <div className="card-body">
-                        <p className="card-text">Compete with other users and teams on our competitive leaderboard.</p>
-                        <Link to="/leaderboard" className="btn btn-primary btn-sm">
-                          View Leaderboard →
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            } 
+            }
           />
           <Route path="/users" element={<Users />} />
           <Route path="/teams" element={<Teams />} />

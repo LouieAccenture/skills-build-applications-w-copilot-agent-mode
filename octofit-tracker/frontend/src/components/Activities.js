@@ -4,126 +4,172 @@ function Activities() {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filter, setFilter] = useState('');
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const codespaceName = process.env.REACT_APP_CODESPACE_NAME || 'localhost';
+  const apiUrl = `https://${codespaceName}-8000.app.github.dev/api/activities/`;
 
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const codespaceName = process.env.REACT_APP_CODESPACE_NAME || 'localhost';
-        const apiUrl = `https://${codespaceName}-8000.app.github.dev/api/activities/`;
-        
         console.log('Fetching activities from:', apiUrl);
-        
         const response = await fetch(apiUrl);
-        
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         console.log('Fetched activities data:', data);
-        
-        // Handle both paginated and plain array responses
-        const activitiesData = data.results || data;
+
+        const activitiesData = Array.isArray(data.results) ? data.results : data;
         setActivities(Array.isArray(activitiesData) ? activitiesData : []);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching activities:', error);
-        setError(error.message);
+      } catch (fetchError) {
+        console.error('Error fetching activities:', fetchError);
+        setError(fetchError.message);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchActivities();
-  }, []);
+  }, [apiUrl]);
+
+  const filteredActivities = activities.filter((activity) => {
+    const text = `${activity.name || ''} ${activity.description || ''}`.toLowerCase();
+    return text.includes(filter.toLowerCase());
+  });
+
+  const openModal = (activity) => {
+    setSelectedActivity(activity);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedActivity(null);
+  };
+
+  const renderModal = () => {
+    if (!showModal || !selectedActivity) return null;
+
+    return (
+      <>
+        <div className="modal fade show d-block" tabIndex="-1" role="dialog" onClick={closeModal}>
+          <div className="modal-dialog modal-lg modal-dialog-centered" role="document" onClick={(event) => event.stopPropagation()}>
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Activity Details</h5>
+                <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
+              </div>
+              <div className="modal-body">
+                <p className="mb-2"><strong>Name:</strong> {selectedActivity.name || 'N/A'}</p>
+                <p className="mb-2"><strong>Description:</strong> {selectedActivity.description || 'N/A'}</p>
+                <p className="mb-2"><strong>Calories Burned:</strong> {selectedActivity.calories_burned || 'N/A'}</p>
+                <p className="mb-2"><strong>Duration:</strong> {selectedActivity.duration || 'N/A'} minutes</p>
+                <p className="mb-0"><strong>ID:</strong> {selectedActivity.id || 'N/A'}</p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={closeModal}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="modal-backdrop fade show" />
+      </>
+    );
+  };
 
   if (loading) {
     return (
-      <div className="container">
-        <div className="alert alert-info" role="alert">
-          <strong>Loading...</strong> Fetching activities data...
-        </div>
+      <div className="container py-4">
+        <div className="alert alert-info">Loading activities data...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="container">
-        <div className="alert alert-danger" role="alert">
-          <strong>Error:</strong> {error}
-        </div>
+      <div className="container py-4">
+        <div className="alert alert-danger">Error fetching activities: {error}</div>
       </div>
     );
   }
 
   return (
-    <div className="container">
-      <div className="row mb-4">
-        <div className="col-12">
+    <div className="container py-4">
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-start mb-4 gap-3">
+        <div>
           <h2>🎯 Activities</h2>
+          <p className="text-muted">Activity data from the backend REST API endpoint.</p>
         </div>
+        <button className="btn btn-success" onClick={() => window.location.reload()}>
+          Refresh Data
+        </button>
       </div>
 
-      {activities.length === 0 ? (
-        <div className="row">
-          <div className="col-12">
-            <div className="alert alert-info empty-state">
-              <div className="empty-state-icon">📋</div>
-              <h5>No activities found</h5>
-              <p>Start by logging your first activity!</p>
-            </div>
+      <form className="row g-3 align-items-center mb-4" onSubmit={(event) => event.preventDefault()}>
+        <div className="col-md-8">
+          <div className="input-group">
+            <span className="input-group-text">Search</span>
+            <input
+              className="form-control"
+              type="search"
+              value={filter}
+              placeholder="Search activities..."
+              onChange={(event) => setFilter(event.target.value)}
+            />
           </div>
+        </div>
+        <div className="col-md-4 text-md-end">
+          <span className="text-muted">Endpoint: {apiUrl}</span>
+        </div>
+      </form>
+
+      {filteredActivities.length === 0 ? (
+        <div className="empty-state">
+          <div className="empty-state-icon">📋</div>
+          <h5>No activities found</h5>
+          <p>Try a different search term or add activity records in the backend.</p>
         </div>
       ) : (
-        <div className="row">
-          <div className="col-12">
-            <div className="table-responsive">
-              <table className="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Activity Name</th>
-                    <th>Description</th>
-                    <th>Calories Burned</th>
-                    <th>Duration (minutes)</th>
-                    <th className="text-center">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {activities.map((activity) => (
-                    <tr key={activity.id}>
-                      <td>
-                        <span className="badge bg-primary">{activity.id}</span>
-                      </td>
-                      <td>
-                        <strong>{activity.name || 'N/A'}</strong>
-                      </td>
-                      <td>
-                        <small>{activity.description || 'N/A'}</small>
-                      </td>
-                      <td>
-                        <span className="badge bg-warning">{activity.calories_burned || 'N/A'} cal</span>
-                      </td>
-                      <td>{activity.duration || 'N/A'}</td>
-                      <td className="text-center">
-                        <button className="btn btn-sm btn-info me-2" title="View Details">
-                          👁️
-                        </button>
-                        <button className="btn btn-sm btn-warning me-2" title="Edit">
-                          ✏️
-                        </button>
-                        <button className="btn btn-sm btn-danger" title="Delete">
-                          🗑️
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+        <div className="table-responsive">
+          <table className="table table-striped table-hover align-middle">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Calories</th>
+                <th>Duration</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredActivities.map((activity, index) => (
+                <tr key={activity.id || index}>
+                  <td>{activity.id || 'N/A'}</td>
+                  <td>{activity.name || 'N/A'}</td>
+                  <td>{activity.description || 'N/A'}</td>
+                  <td>{activity.calories_burned || 'N/A'}</td>
+                  <td>{activity.duration || 'N/A'}</td>
+                  <td>
+                    <button type="button" className="btn btn-sm btn-primary" onClick={() => openModal(activity)}>
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
+
+      {renderModal()}
     </div>
   );
 }
